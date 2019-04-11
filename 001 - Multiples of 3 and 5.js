@@ -1,4 +1,4 @@
-const { triangleNum, triangleNum_n } = require('./helpers/');
+const { triangleNum, triangleNum_n } = require('./helpers');
 
 
 //% https://projecteuler.net/problem=1 
@@ -20,6 +20,9 @@ const { triangleNum, triangleNum_n } = require('./helpers/');
   The sum of these multiples is 23
   
   ? Find the sum of all the multiples of 3 or 5 below N.
+
+  * Constraints
+  1 <= N <= 10^9
 */
 
 const n = Number(process.argv[2]) || 1000;
@@ -31,13 +34,16 @@ ${sumMultiplesBelow(n)}
 (as Number type)
 `);
 
+//!-Notes / Logic / Short Explanations-
+/*
+        3+6+9+...+[  (n-1)-(n-1)%3 ]  <- last multiple of 3 BELOW (not incld.) n 
+  = 3* (1+2+3+...+[_ (n-1)/3      _]) <- [_ _] is 'floor' function 
+
+  1+2+3+...+k = k*(k+1)/2 <- closed-form expression, aka triangle numbers 
+*/
+//!------------------------------------
 
 function sumMultiplesBelow(n) {
-
-  //      3+6+9+...+[  (n-1)-(n-1)%3 ]  <- last multiple of 3 BELOW (not incld.) n 
-  //= 3* (1+2+3+...+[_ (n-1)/3      _]) <- [_ _] is 'floor' function 
-
-  // 1+2+3+...+k = k*(k+1)/2 <- closed-form expression, aka triangle numbers 
 
   return (
     - 15 * triangleNum(Math.floor((n-1)/15)) // multiples of 15 (3*5) are double counted
