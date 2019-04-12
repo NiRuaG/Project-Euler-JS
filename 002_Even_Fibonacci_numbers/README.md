@@ -40,19 +40,23 @@ Fib_n = 1/√5 * ((1+√5)/2)^n  -  1/√5 * ((1-√5)/2)^n
 
 The even Fibonacci terms follow their own recurrence relation shown above:
 <pre>
-EvenFib_i = 4 * EvenFib_i-1 + EvenFib_i-1
+EvenFib_i = 4 * EvenFib_i-1 + EvenFib_i-2
 </pre>
 We can look for solutions where _EvenFib_n_ is of the form _x^n_, and by satisfying the above relation gives:
 <pre>
 x^n =        4 * x^(n-1) + x^(n-2)
   0 =  x^n - 4 * x^(n-1) - x^(n-2)
   0 = (x^2 - 4 * x       - 1) * x^(n-2)
+
+find roots for this part
+  0 = (x^2 - 4 * x       - 1) 
 </pre>
 _razzle-dazzle ❇️ quadratic formula_
 <pre>
 x = 2 + √5 and x = 2 - √5
 </pre>
 are roots of the equation.  
+
 EvenFib will have a closed form with these roots and possible constants _a, b_ 
 <pre>
 EvenFib_n = a*(2+√5)^n + b*(2-√5)^n
