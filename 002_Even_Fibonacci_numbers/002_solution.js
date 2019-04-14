@@ -37,17 +37,25 @@ console.log(`\nThe sum of the even-valued terms of the Fibonacci sequence whose 
 
 //* Recurrence relation that even numbers occur every 3 terms, and that each even F_i = 4* F_i-3 + F_i-6
 
-function sumEvenFibs_byRecur_NotExceeding(n) {
-
+//* Generator function
+function* evenFibs() {
   let f_even_prev = 0;
   let f_even = 2;
-  
+
+  while (true) {
+    yield f_even;
+    [f_even, f_even_prev] = [4*f_even + f_even_prev, f_even]; // "swap", or done with temp variable
+  }
+}
+
+function sumEvenFibs_byRecur_NotExceeding(n) {
   let sum = 0;
 
-  while (f_even <= n) {
-    sum += f_even;
+  const evenFibGen = evenFibs();
+  let evenFibVal;
 
-    [f_even, f_even_prev] = [4*f_even + f_even_prev, f_even]; // "swap", or done with temp variable
+  while ((evenFibVal = evenFibGen.next().value) <= n) {
+    sum += evenFibVal;
   }
 
   return sum;
@@ -61,20 +69,28 @@ ${sumEvenFibs_byRecur_NotExceeding(n)}
 `);
 
 
-
+//* Recurrence Relation with BigInt
 //! n = 37889062373143900 is the first instance of difference between Number vs BigInt results
+
+function* evenFibs_n() {
+  let f_even_prev = 0n;
+  let f_even = 2n;
+
+  while (true) {
+    yield f_even;
+    [f_even, f_even_prev] = [4n*f_even + f_even_prev, f_even]; // "swap", or done with temp variable
+  }
+}
 
 function sumEvenFibs_byRecur_NotExceeding_n(n) {
 
-  let f_even_prev = 0n;
-  let f_even = 2n;
-  
   let sum = 0n;
 
-  while (f_even <= n) {
-    sum += f_even;
+  const evenFibGen = evenFibs_n();
+  let evenFibVal;
 
-    [f_even, f_even_prev] = [4n*f_even + f_even_prev, f_even]; // "swap", or done with temp variable
+  while ((evenFibVal = evenFibGen.next().value) <= n) {
+    sum += evenFibVal;
   }
 
   return sum;
@@ -90,7 +106,9 @@ ${sumEvenFibs_byRecur_NotExceeding_n(BigInt(n))}
 
 
 //* Closed Form expression with convention that EvenFib_0 = 0 and EvenFib_1 = 2
-//! accurate (enough) only until n (power) = 25
+//! n (bound) = 2111485077978052 is the first instance of difference between closed-form vs iterate/generator results 
+
+//! closed-form function is accurate (enough) only until n (power) = 25
 const sqrt5 = Math.sqrt(5);
 const evenFibClosed = n => Math.floor(sqrt5 * Math.pow(2+sqrt5, n)/5 + 1/2);
 
