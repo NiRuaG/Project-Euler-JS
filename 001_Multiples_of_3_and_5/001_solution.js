@@ -2,7 +2,7 @@ const { triangleNum, triangleNum_n } = require('../helpers');
 
 
 //% https://projecteuler.net/problem=1 
-//% Published on October 5th 2001
+//% Published on Friday, 5th October 2001
 //% Difficulty rating: 5%
 /*
   *Multiples of 3 and 5
@@ -13,6 +13,7 @@ const { triangleNum, triangleNum_n } = require('../helpers');
 
   ? Find the sum of all the multiples of 3 or 5 below 1000.
 */
+// Answer: 233168
 
 
 //% https://www.hackerrank.com/contests/projecteuler/challenges/euler001/problem
@@ -27,7 +28,7 @@ const { triangleNum, triangleNum_n } = require('../helpers');
 */
 
 
-const n = Number(process.argv[2]) || 1000;
+const n = process.argv[2] || 1000;
 
 console.log(`\nThe sum of all the multiples of 3 or 5 below ${n} is`);
 
@@ -39,7 +40,7 @@ const sumMultiplesBelow = (n) => (
 );
 
 console.log(`
-${sumMultiplesBelow(n)}
+${sumMultiplesBelow(Number(n))}
 (as Number type)
 `);
 
