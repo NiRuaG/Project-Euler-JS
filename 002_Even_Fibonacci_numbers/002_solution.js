@@ -30,7 +30,7 @@
 
 
 
-const n = Number(process.argv[2]) || 4000000;
+const n = process.argv[2] || 4000000;
 
 console.log(`\nThe sum of the even-valued terms of the Fibonacci sequence whose values do not exceed ${n} is `);
 
@@ -63,7 +63,7 @@ function sumEvenFibs_byRecur_NotExceeding(n) {
 
 
 console.log(`
-${sumEvenFibs_byRecur_NotExceeding(n)}
+${sumEvenFibs_byRecur_NotExceeding(Number(n))}
 > as Number type
 > with recurrence relation
 `);
@@ -106,7 +106,7 @@ ${sumEvenFibs_byRecur_NotExceeding_n(BigInt(n))}
 
 
 //* Closed Form expression with convention that EvenFib_0 = 0 and EvenFib_1 = 2
-//! n (bound) = 2111485077978052 is the first instance of difference between closed-form vs iterate/generator results 
+//! n (bound) = 2111485077978050 is the first instance of difference between closed-form vs iterate/generator results 
 
 //! closed-form function is accurate (enough) only until n (power) = 25
 const sqrt5 = Math.sqrt(5);
@@ -130,7 +130,7 @@ function sumEvenFibs_byClosed_NotExceeding(n) {
 
 
 console.log(`
-${sumEvenFibs_byClosed_NotExceeding(n)}
+${sumEvenFibs_byClosed_NotExceeding(Number(n))}
 > as Number type
 > with closed form expression
 `);
