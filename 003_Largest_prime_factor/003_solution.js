@@ -53,7 +53,8 @@ function largestPrimeFactor(n) {
   if (n === 1) { return 2; }
   if (n === 0) { return NaN; } //! there was overflow (assuming n > 0)
 
-  let doReturn; // return variable
+  
+  let doReturn; // flag variable indicating if should return
 
   if ([doReturn, n] = divideOutAndCheck(n, 3), doReturn) { return n }; // take out factors of 3
   
@@ -85,7 +86,7 @@ function largestPrimeFactor_gen(n) {
   const pGen = require('../helpers').primes_1000_gen();
 
   let { done, value } = pGen.next(); 
-  let doReturn;
+  let doReturn; // flag variable indicating if should return
 
   while( !done
       && !([doReturn, n] = divideOutAndCheck(n, value), doReturn))
@@ -126,7 +127,7 @@ ${largestPrimeFactor_gen(Number(n))}
 function largestPrimeFactor_n(n) {
   if (n === 1n) { return 1n };
 
-  let doReturn; // return variable
+  let doReturn; // flag variable indicating if should return
 
   if ([doReturn, n] = divideOutAndCheck(n, 2n), doReturn) return n;
   if ([doReturn, n] = divideOutAndCheck(n, 3n), doReturn) return n;
