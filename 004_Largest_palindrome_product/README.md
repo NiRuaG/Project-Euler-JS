@@ -1,4 +1,4 @@
-# Problem 3 - Largest prime factor
+# Problem 4 - Largest palindrome product
 ## Notes / Logic / Explanations 
 
 ---
@@ -132,7 +132,7 @@ The digits between the a's should be 9's, to keep the number high as possible.
 <pre>
 When A>F, C=D=0, and B=E=0,
 
-a9999A 
+a9999a 
 is the largest palindrome <= ABCDEF
 
 This can be expressed as ABCCBA - 11.
