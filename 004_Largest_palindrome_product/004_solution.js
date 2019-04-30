@@ -1,153 +1,113 @@
-//% https://projecteuler.net/problem=3 
-//% Published on Friday, 2nd November 2001
+//% https://projecteuler.net/problem=4 
+//% Published on Friday, 16th November 2001
 //% Difficulty rating: 5%
 /*
-  * Largest prime factor
-  * Problem 3
+  * Largest palindrome product
+  * Problem 4
+  
+  A palindromic number reads the same both ways. 
+  The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99.
 
-  The prime factors of 13195 are 5, 7, 13 and 29.
-
-  ? What is the largest prime factor of the number 600851475143?
+  ? Find the largest palindrome made from the product of two 3-digit numbers.
 */
-// Answer: 6857
+// Answer: 906609
 
 
-//% https://www.hackerrank.com/contests/projecteuler/challenges/euler003/problem
+//% https://www.hackerrank.com/contests/projecteuler/challenges/euler004/problem
 /*
-  The prime factors of 13195 are 5, 7, 13 and 29.
+  A palindromic number reads the same both ways. 
+  The smallest 6 digit palindrome made from the product of two 3-digit numbers is 
+  101101 = 143 * 707. 
 
-  ? What is the largest prime factor of a given number N?
+  ? Find the largest palindrome made from the product of two 3-digit numbers which is less than N.
 
   * Constraints
-  10 <= N <= 10^12
+  101101 < N < 1000000
 */
 
 
 
-let n = process.argv[2] || 600851475143;
+let n = process.argv[2] || 999*999+1; // the largest product of two 3-digit numbers (+1 to search for numbers LESS than it)
 
-console.log(`\nThe largest prime factor of ${n} is `);
+console.log(`\nThe largest 6-digit palindrome # that is both made from the product of two 3-digit numbers and that is less than ${n} is:`);
 
 
-//* Reusable function
-// divide/take out all factors of v from n, then see if one of them is the greatest prime factor
-const divideOutAndCheck = (n, v) => {
-  //! loose equalities -> works for both Number AND BigInt types
+//* Helper function
+// returns the next largest palindrome number less than or equal to n, a 6- digit number
+const largestPalindrome6 = (n) => {
+  //? assumption: if (n < 100001 || n > 999999) return NaN;
 
-  while ((n % v) == 0) { n /= v; }
+  const [a,b,c,d,e,f] = Array.from(String(n)).map(Number);
+  
+  const pal0 = 
+      a * 100001
+    + b *  10010
+    + c *   1100;
+  // the default palindrome return value is abccba
+  
+  /* 
+    ! if generalizing to numbers larger than 6-digits, consider an additional function to compute/generate these other possible return values
+    With additional considerations if number is odd-digited 
+  */
+  const pal1 = pal0 - 1100; // abc'c'ba (c' being one less than c) 
+  const pal2 = pal0 -  110; // ab'99b'a
+  const pal3 = pal0 -   11; // a'9999a'
+  
 
-  if (n == 1) { return [true, v] }; // the value divided out of n was its largest prime, and n was a power of it (eg v*v*v = n)
+  if (c<d) return pal0; // default as is
+  if (c>d) return pal1; // abc'c'ba
+  
+  // at this point, if have not returned, c = d
+  if (b<e) return pal0; // default as is
+  if (b>e) return (c!==0 ? pal1 : pal2); // abc'c'ba if c wasn't 0, o/w ab'99b'a 
 
-  if (v * v > n) { return [true, n] }; // there are no more factors to divide out, n will now be the largest prime itself
+  // at this point, if have not returned, b = e also
+  if (a<=f) return pal0; // default as is
 
-  return [false, n]; // there are potentially more prime factors, return n, which may have been reduced by factors of v
+  // at this point a>f and we need to check which inner pairs are/not 0  
+  if (c!==0) return pal1; // abc'c'ba
+  if (b!==0) return pal2; // ab'99b'a
+             return pal3; // a'9999a'
 }
 
-
-//* Number type
-function largestPrimeFactor(n) {  
-  if (n === 1) { return 1; }
-
-  //! check for n (not 0) avoids overflow problems (eg n=9007199254740992 or 9007199254740993)
-  while(n && (n&1) === 0) { n >>= 1; } // take out factors of 2 (special testing & division)
-  if (n === 1) { return 2; }
-  if (n === 0) { return NaN; } //! there was overflow (assuming n > 0)
+//* as Number type
+function largestPalindromeAsProduct(n) {
+  
+  let [a,b,c] = Array.from(String(largestPalindrome6(n-1))).map(Number); // the largest palindrome less than n (6-digit number)
 
   
-  let doReturn; // flag variable indicating if should return
+  while (a > 0) {
+    while (b >= 0) {
+      while (c >= 0) {
 
-  if ([doReturn, n] = divideOutAndCheck(n, 3), doReturn) { return n }; // take out factors of 3
-  
-  // after taking out factors of 2 and 3, further primes can only be at 6k+1 or at 6k-1, for integers k > 0
-  // 6k+{0, 2, or 4} would have already been divided out by 2
-  // 6k+3 divided out by 3
-  let sixSteps = 6;
+        const pal = 
+          a*100001+
+          b* 10010+
+          c*  1100;
+        
+        for(let d = 990; d>99; d-=11){
+          if(pal%d===0 && pal/d < 1000) return [pal, d];
+        }
 
-  while (
-       !([doReturn, n] = divideOutAndCheck(n, sixSteps-1), doReturn)
-    && !([doReturn, n] = divideOutAndCheck(n, sixSteps+1), doReturn))
-  {
-    sixSteps += 6;
+        --c;
+      }
+
+      --b;
+      c = 9;
+    }
+
+    --a;
+    b = 9;
   }
 
-  return n;
+  return ["not found!?"];
 }
 
+const [ret, div] = largestPalindromeAsProduct(Number(n));
 console.log(`
-${largestPrimeFactor(Number(n))}
-> as Number type
+${ret} = ${div} * ${ret/div}
 `);
 
 
-//* Number type + Primes Generator function
-function largestPrimeFactor_gen(n) {
-  if (n === 1) { return 1 }
-
-  const pGen = require('../helpers').primes_1000_gen();
-
-  let { done, value } = pGen.next(); 
-  let doReturn; // flag variable indicating if should return
-
-  while( !done
-      && !([doReturn, n] = divideOutAndCheck(n, value), doReturn))
-  {
-    ({ done, value } = pGen.next());
-  }
-
-  // prime generator had enough primes
-  if (!done && doReturn) return n;
-
-  //* prime generator ran out
-  // the last prime value would have been 6k-1 or 6k+1 (for some integer k)
-  // if it was the +1 (value%6 === 1) then go to the NEXT multiple-of-6-step (current value +5)
-  // if it was the -1 instead, then we have to stay at this multiple-of-6-step (current value +1)
-  // this will end up checking the same 6k-1 value again, but the loop will now include checking the +1 side as well
-  let sixSteps = (value + (value%6 === 1 ? 5 : 1));
-
-  while (
-       !([doReturn, n] = divideOutAndCheck(n, sixSteps - 1), doReturn)
-    && !([doReturn, n] = divideOutAndCheck(n, sixSteps + 1), doReturn))
-  {
-    sixSteps += 6;
-  }
-
-  return n;
-}
-
-console.log(`
-${largestPrimeFactor_gen(Number(n))}
-> as Number type
-> with primes generator
-`);
-
-
-//* BigInt type
-//! n = 9007199254740993 is an instance of difference between Number vs BigInt results
-
-function largestPrimeFactor_n(n) {
-  if (n === 1n) { return 1n };
-
-  let doReturn; // flag variable indicating if should return
-
-  if ([doReturn, n] = divideOutAndCheck(n, 2n), doReturn) return n;
-  if ([doReturn, n] = divideOutAndCheck(n, 3n), doReturn) return n;
-  
-  // after taking out factors of 2 and 3, further primes can only be at 6k+1 or at 6k-1, for integers k > 0
-  // 6k+{0, 2, or 4} would have already been divided out by 2
-  // 6k+3 divided out by 3
-  let sixSteps = 6n;
-
-  while (
-       !([doReturn, n] = divideOutAndCheck(n, sixSteps - 1n), doReturn)
-    && !([doReturn, n] = divideOutAndCheck(n, sixSteps + 1n), doReturn))
-  {
-    sixSteps += 6n;
-  }
-
-  return n;
-}
-
-console.log(`
-${largestPrimeFactor_n(BigInt(n))}
-> as BigInt type
-`);
+//* as BigInt type
+//! problem constraints do not need BigInt type
