@@ -15,3 +15,14 @@ exports.primes_1000_gen = function*() {
   return primes_1000[--i]; // give the last value generated as part of { done: true }
 }
 
+const gcd2 = (x,y) => {
+  while (y) {
+    [x, y] = [y, x % y];
+  }
+  return x;
+}
+exports.gcd2 = gcd2;
+exports.lcm2 = (x,y) => x*y/gcd2(x,y);
+
+exports.gcd = (...x) => x.reduce(gcd2, x[0]);
+exports.lcm = (...x) => x.reduce(lcd2, 1);
