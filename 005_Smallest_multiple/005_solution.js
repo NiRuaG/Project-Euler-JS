@@ -1,3 +1,5 @@
+const { lcm, lcm2 } = require('../helpers');
+
 //% https://projecteuler.net/problem=5 
 //% Published on Friday, 30th November 2001
 //% Difficulty rating: 5%
@@ -9,10 +11,10 @@
   
   ? What is the smallest possible number that is evenly divisible by all of the numbers from 1 to 20?
 */
-// TODO: Answer: 
+// Answer: 232792560
 
 
-//% https://www.hackerrank.com/contests/projecteuler/challenges/euler004/problem
+//% https://www.hackerrank.com/contests/projecteuler/challenges/euler005/problem
 /*
   ? What is the smallest positive number that is evenly divisible by all of the numbers from 1 to N?
 
@@ -26,44 +28,87 @@ let n = process.argv[2] || 20;
 console.log(`\nThe smallest number that is evenly divisible by all of the numbers from 1 to ${n} is:`);
 
 
-//* as Number type
-function largestPalindromeAsProduct(n) {
-  
-  let [a,b,c] = Array.from(String(largestPalindrome6(n-1))).map(Number); // the largest palindrome less than n (6-digit number)
-
-  
-  while (a > 0) {
-    while (b >= 0) {
-      while (c >= 0) {
-
-        const pal = 
-          a*100001+
-          b* 10010+
-          c*  1100;
-        
-        for(let d = 990; d>99; d-=11){
-          if(pal%d===0 && pal/d < 1000) return [pal, d];
-        }
-
-        --c;
-      }
-
-      --b;
-      c = 9;
-    }
-
-    --a;
-    b = 9;
-  }
-
-  return ["not found!?"];
+//* as Number type + LCM of array (set of numbers)
+function LCM_Naturals_byArray(n) {
+  const arr = [...Array(n).keys()].map(m => n - m); // makes an array [n, n-1,..., 1]
+  return lcm(...arr);
 }
 
-const [ret, div] = largestPalindromeAsProduct(Number(n));
 console.log(`
-${ret} = ${div} * ${ret/div}
+${LCM_Naturals_byArray(Number(n))}
+> as Number type
+> with array of natural numbers
+`);
+
+
+//* as Number type + Primes Generator function
+function LCM_Naturals_byGenerator(n) {
+
+  let result = 1;
+
+  const sqrtN = Math.sqrt(n);
+  const  logN = Math.log (n);
+
+
+  const pGen = require('../helpers').primes_1000_gen();
+  let { done, value } = pGen.next();
+
+  
+  while(!done && value <= sqrtN) {
+    const power = Math.trunc(logN / Math.log(value) + Number.EPSILON); // log(1000)/log(10) results in 2.999...6
+
+    result *= value ** power;
+    
+    ({ done, value } = pGen.next());
+  }
+
+  if (done) {
+    //* prime generator ran out
+    // if we can be knowledgeable about our generator, we had the first 10000 primes, 
+    // which probably also means our result will be too big as a Number anyways
+    return NaN; // or throw
+    //? TODO: carry on trying to generate primes, or fallback to LCM with range from last prime to n
+  }
+
+  while(!done && value <= n) {
+    result *= value; // implicit power 1
+    ({ done, value } = pGen.next());
+  }
+  
+  if (done) {
+    //* prime generator ran out
+    // which probably also means our result will be too big as a Number anyways
+    return NaN; // or throw
+    //? TODO: carry on trying to generate primes, or fallback to LCM with range from last prime to n
+  }
+
+  return result;
+
+}
+
+console.log(`
+${LCM_Naturals_byGenerator(Number(n))}
+> as Number type
+> with generator of primes
 `);
 
 
 //* as BigInt type
-//! problem constraints do not need BigInt type
+//! problem constraints n<=40 do not need BigInt type 
+//! at n = 43 is the first instance of difference between Number vs BigInt results 
+function LCM_Naturals_n(n) {
+  let lcm_result = n;
+
+  //! for a BigInt n, we might not want to make an array of its size, so loop instead
+  for (let i = n - 1n; i > 1n; --i) {
+    lcm_result = lcm2(lcm_result, i);
+  }
+  
+  return lcm_result;
+}
+
+console.log(`
+${LCM_Naturals_n(BigInt(n))}
+> as BigInt type
+> with iteration through natural numbers
+`);
