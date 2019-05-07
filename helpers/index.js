@@ -22,7 +22,9 @@ const gcd2 = (x,y) => {
   return x;
 }
 exports.gcd2 = gcd2;
-exports.lcm2 = (x,y) => x*y/gcd2(x,y);
+
+const lcm2 = (x,y) => (x/gcd2(x,y))*y;
+exports.lcm2 = lcm2;
 
 exports.gcd = (...x) => x.reduce(gcd2, x[0]);
-exports.lcm = (...x) => x.reduce(lcd2, 1);
+exports.lcm = (...x) => x.reduce(lcm2, 1);
