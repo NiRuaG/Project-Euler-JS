@@ -19,7 +19,7 @@ const { Fraction } = require('./../helpers/Fraction');
 
  Give your answer rounded to eight decimal places in the form 0.abcdefgh .
 */
-//TODO: Answer: 0.83648556
+// Answer: 0.83648556
 
 
 //% https://www.hackerrank.com/contests/projecteuler/challenges/euler232/problem
@@ -69,11 +69,7 @@ const f = {};
   f[n] = Fraction.fromBigInt(BigInt(n));
 });
 
-
-//% k is P2 points left to win (>0), p is points to win game (>0)
-const memoCheck = (k, p) => memo[k] && memo[k][p];
-const memoSet = (k, p, val) => memo[k][p] = val;
-
+let memo;
 
 function P2_Win_Chance(P2_points, pointsToWin) {
 
@@ -91,8 +87,8 @@ function P2_Win_Chance(P2_points, pointsToWin) {
 
 
   //* Check for if state has been memoized
-  const memo = memoCheck(P2_pointsToWin, pointsToWin);
-  if (memo) { return memo; }
+  const haveMemo = memo[P2_pointsToWin][pointsToWin];
+  if (haveMemo) { return haveMemo; }
 
 
   //* Evaluate P2's best choice and chances to win for this state
@@ -109,10 +105,11 @@ function P2_Win_Chance(P2_points, pointsToWin) {
   for (
     let tosses = 1, pointsGained = 1  , q = 2
     ; tosses <= tosses_max
-    ; ++tosses    , pointsGained <<= 1, q <<= 1) 
+    ; ++tosses    , pointsGained <<= 1, q <<= 1
     // as # of flips steps up, points gained and q chance step up by powers of 2
-    {
+  ){
 
+    //? TODO: anything to gain knowing as pointsToWin increases, T never increases?
 
     // an external point-state: after P1 receives 1 point and it is then P2's turn
     const { P2_turn: ext_P2, approx: { P2_turn: ext_P2_approx } } =
@@ -142,19 +139,17 @@ function P2_Win_Chance(P2_points, pointsToWin) {
       const P2_turn = f[2].mult(P1_turn).minus(ext_P2);
       approx.P2_turn = 2*approx.P1_turn - ext_P2_approx;
 
-      best = { P1_turn, P2_turn };
+      best = { P1_turn, P2_turn, T: tosses };
     }
 
   }
 
   // reduce fractions for best, and include approximate values
-  best = {
-    P1_turn: best.P1_turn.reduce(),
-    P2_turn: best.P2_turn.reduce(),
-    approx
-  };
+  best.P1_turn = best.P1_turn.reduce();
+  best.P2_turn = best.P2_turn.reduce();
+  best = { ...best, approx };
 
-  memoSet(P2_pointsToWin, pointsToWin, best); // whatever is returned, add to memo
+  memo[P2_pointsToWin][pointsToWin] = best; // whatever is returned, add to memo
   return best;
 }
 
