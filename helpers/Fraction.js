@@ -6,12 +6,18 @@ class Fraction {
     this.den = den;
   }
 
-  static fromInt = (i) => new Fraction(i, 1n);
+  static fromInt = i => new Fraction(i, 1);
+  static fromBigInt = i => new Fraction(i, 1n);
 
   plus = (that) => new Fraction(
     this.num * that.den + that.num * this.den,
     this.den * that.den
   );
+
+  minus = (that) => new Fraction(
+    this.num * that.den - that.num * this.den,
+    this.den * that.den
+  )
 
   div = (that) => new Fraction(
     this.num * that.den,
