@@ -1,4 +1,5 @@
-const { Fraction } = require('./../helpers/Fraction');
+const { isPowerOf2, modularInverse } = require('../helpers');
+const { Fraction       } = require('../helpers/Fraction');
 
 //% https://projecteuler.net/problem=232 
 //% Published on Friday, 13th February 2009
@@ -65,9 +66,11 @@ const f = {};
   64,  65,
  128, 129,
  256, 257,
+ 512, 513,
 ].forEach(n => {
   f[n] = Fraction.fromBigInt(BigInt(n));
 });
+
 
 let memo;
 
@@ -159,14 +162,21 @@ function Race_P2_Win_Percentage(points) {
   // setup memoize array
   memo = [...Array(points+1)].map(_ => Array(points+1)); // +1 to accommodate 0-base indexing
 
-  const { P1_turn, approx: { P1_turn: approx } } = P2_Win_Chance(0, points);
+  let { P1_turn, approx: { P1_turn: approx } } = P2_Win_Chance(0, points);
+  // P1_turn = P1_turn.reduce();
   const { num, den } = P1_turn;
+
+  //*Extra work for Hacker Rank output (modular division)
+  const m = 1000000007n;
+  const num_mod_m = num % m;
+  const HR_answer = (modularInverse(den, m) * num_mod_m) % m;
 
   return {
          fraction: P1_turn.toString(),
+    approximately: approx,
         numerator: num,
       denominator: den,
-    approximately: approx
+        HR_answer
   };
 }
 
